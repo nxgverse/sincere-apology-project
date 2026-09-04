@@ -25,7 +25,9 @@ export function MemoryVideo({ src, poster, label }: Props) {
     const node = wrapRef.current;
     if (!node) return;
     const io = new IntersectionObserver(
-      ([entry]) => {
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
         setNear(entry.isIntersecting || entry.intersectionRatio > 0);
         if (!entry.isIntersecting && videoRef.current && !videoRef.current.paused) {
           videoRef.current.pause();

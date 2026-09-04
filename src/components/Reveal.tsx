@@ -32,14 +32,14 @@ export function Reveal({
     return () => io.disconnect();
   }, []);
 
+  const Comp = Tag as "div";
   return (
-    // @ts-expect-error dynamic tag ref typing
-    <Tag
-      ref={ref}
+    <Comp
+      ref={ref as React.RefObject<HTMLDivElement>}
       className={`reveal ${shown ? "is-in" : ""} ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
-    </Tag>
+    </Comp>
   );
 }

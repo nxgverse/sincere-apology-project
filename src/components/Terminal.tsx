@@ -26,8 +26,8 @@ export function Terminal() {
     const node = ref.current;
     if (!node) return;
     const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
           io.disconnect();
           let i = 0;
           const tick = () => {
