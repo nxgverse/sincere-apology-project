@@ -143,6 +143,7 @@ export function MemoryVideo({ src, poster, label }: Props) {
             step={0.1}
             value={progress}
             aria-label="Seek"
+            suppressHydrationWarning
             onChange={(e) => {
               const v = videoRef.current;
               if (v?.duration) v.currentTime = (Number(e.target.value) / 100) * v.duration;
