@@ -162,11 +162,12 @@ function Letter() {
           <h2 className="display-lg mt-6 max-w-[16ch]">Let me start with the part I own.</h2>
         </Reveal>
         <div className="mt-12 max-w-[38ch] space-y-7 sm:max-w-[46ch]">
-          <Line>I was the one who ended the relationship.</Line>
+          <Line>I was the one who ended us.</Line>
           <Line delay={80}>
-            Zipporah did not leave me. She did not decide we weren&apos;t worth it. She did not stop
-            caring. I made the decision.
+            You didn&apos;t leave me. You didn&apos;t decide we weren&apos;t worth it. You didn&apos;t
+            stop caring.
           </Line>
+          <Line delay={160}>I made that decision. And I need to own that.</Line>
         </div>
       </section>
 
