@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import aeo from "@/assets/aeo.mp3.asset.json";
+const audioSource = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Anendlessocean_-_Make_You_Feel_My_Love_CeeNaija.com_-JfxdNyAbTmiqQFqWvBbD3k7CDW3GwP.mp3";
 
 type AudioApi = {
   started: boolean;
@@ -98,10 +98,14 @@ export function SoundtrackProvider({ children }: { children: ReactNode }) {
     const el = elRef.current;
     if (!el || started) return;
     el.volume = 0;
-    void el.play().catch(() => undefined);
-    setStarted(true);
-    fadeTo(FULL, 3200);
-    startBreathing();
+    el.muted = false;
+    void el.play().then(() => {
+      setStarted(true);
+      fadeTo(FULL, 3200);
+      startBreathing();
+    }).catch(() => {
+      setStarted(false);
+    });
   }, [fadeTo, started, startBreathing]);
 
   const toggleMute = useCallback(() => {
@@ -136,7 +140,7 @@ export function SoundtrackProvider({ children }: { children: ReactNode }) {
 
   return (
     <Ctx.Provider value={value}>
-      <audio ref={elRef} src={aeo.url} loop preload="auto" playsInline crossOrigin="anonymous" />
+      <audio ref={elRef} src={audioSource} loop preload="auto" playsInline crossOrigin="anonymous" />
       {children}
     </Ctx.Provider>
   );

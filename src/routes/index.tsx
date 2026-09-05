@@ -10,10 +10,10 @@ import { ThingsIMiss } from "@/components/ThingsIMiss";
 import { PhoneDownGate } from "@/components/PhoneDownGate";
 import { GoBack } from "@/components/GoBack";
 
-import v5 from "@/assets/memory-5.mp4.asset.json";
-import v6 from "@/assets/memory-6.mp4.asset.json";
-import v7 from "@/assets/memory-7.mp4.asset.json";
-import v8 from "@/assets/memory-8.mp4.asset.json";
+const v5 = { url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/VID-20260905-WA0015-IrEr2QWpnKdw1F7SUhAZjwvOTkV2tX.mp4" };
+const v6 = { url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/VID-20260905-WA0013-gcV1tSrT1Re1DEOAbW4DS1EFFHtpwD.mp4" };
+const v7 = { url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/VID-20260905-WA0014-GX1g7LzW73QFarjnywUqG8YIbZxZuo.mp4" };
+const v8 = { url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/VID-20260905-WA0016-HIpe4kA9vEVjoVRMRErkcbbzlmwgJ0.mp4" };
 import p5 from "@/assets/memory-5-poster.jpg.asset.json";
 import p6 from "@/assets/memory-6-poster.jpg.asset.json";
 import p7 from "@/assets/memory-7-poster.jpg.asset.json";
