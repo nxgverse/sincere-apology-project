@@ -98,10 +98,14 @@ export function SoundtrackProvider({ children }: { children: ReactNode }) {
     const el = elRef.current;
     if (!el || started) return;
     el.volume = 0;
-    void el.play().catch(() => undefined);
-    setStarted(true);
-    fadeTo(FULL, 3200);
-    startBreathing();
+    el.muted = false;
+    void el.play().then(() => {
+      setStarted(true);
+      fadeTo(FULL, 3200);
+      startBreathing();
+    }).catch(() => {
+      setStarted(false);
+    });
   }, [fadeTo, started, startBreathing]);
 
   const toggleMute = useCallback(() => {

@@ -15,7 +15,7 @@ export function MemoryVideo({ src, poster, label }: Props) {
   const duckingRef = useRef(false);
   const { duck, unduck } = useSoundtrack();
 
-  const [near, setNear] = useState(false);
+  const [near, setNear] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -77,9 +77,8 @@ export function MemoryVideo({ src, poster, label }: Props) {
       <video
         ref={videoRef}
         className="block h-auto w-full"
-        src={near ? src : undefined}
-        poster={poster}
-        preload={near ? "metadata" : "none"}
+        src={src}
+        preload="metadata"
         playsInline
         aria-label={label}
         onPlay={() => {

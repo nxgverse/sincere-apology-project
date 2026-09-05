@@ -72,7 +72,6 @@ export function PhoneDownGate({ src, poster, label, onCinema }: Props) {
               ref={videoRef}
               className="block h-auto max-h-[82svh] w-full rounded-[26px] sm:rounded-[32px]"
               src={src}
-              poster={poster}
               preload="metadata"
               playsInline
               aria-label={label}
