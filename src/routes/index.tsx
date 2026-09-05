@@ -1,10 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import { SoundtrackProvider, useSoundtrack } from "@/lib/audio";
 import { Reveal } from "@/components/Reveal";
 import { MemoryVideo } from "@/components/MemoryVideo";
 import { Terminal } from "@/components/Terminal";
+import { AmbientBreath } from "@/components/AmbientBreath";
+import { ThingsIMiss } from "@/components/ThingsIMiss";
+import { PhoneDownGate } from "@/components/PhoneDownGate";
+import { GoBack } from "@/components/GoBack";
 
 import v5 from "@/assets/memory-5.mp4.asset.json";
 import v6 from "@/assets/memory-6.mp4.asset.json";
@@ -15,9 +19,9 @@ import p6 from "@/assets/memory-6-poster.jpg.asset.json";
 import p7 from "@/assets/memory-7-poster.jpg.asset.json";
 import p8 from "@/assets/memory-8-poster.jpg.asset.json";
 
-// Configure these before sharing the link.
-const CALL_LINK = "#call-link";
-const MESSAGE_LINK = "#message-link";
+const CALL_LINK = "tel:+2348114403035";
+const WHATSAPP_MESSAGE = "Hey Josiah. I read all of it. Can we talk?";
+const MESSAGE_LINK = `https://wa.me/2349044162184?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,6 +37,8 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "A private letter from Josiah — an apology, a few real memories, and one question.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -50,16 +56,21 @@ function Page() {
 function Experience() {
   const { start, started } = useSoundtrack();
   const [entered, setEntered] = useState(false);
+  const [cinema, setCinema] = useState(false);
 
   useEffect(() => {
+    if (cinema) return;
     document.documentElement.style.overflow = entered ? "" : "hidden";
     return () => {
       document.documentElement.style.overflow = "";
     };
-  }, [entered]);
+  }, [entered, cinema]);
+
+  const onCinema = useCallback((on: boolean) => setCinema(on), []);
 
   return (
     <>
+      <AmbientBreath />
       <Intro
         entered={entered}
         onEnter={() => {
@@ -69,7 +80,7 @@ function Experience() {
       />
       <main
         aria-hidden={!entered}
-        className="relative mx-auto w-full max-w-[1100px] px-6 sm:px-10"
+        className="relative z-10 mx-auto w-full max-w-[1100px] px-6 sm:px-10"
         style={{
           opacity: entered ? 1 : 0,
           filter: entered ? "blur(0px)" : "blur(26px)",
@@ -78,17 +89,21 @@ function Experience() {
             "opacity 1.6s var(--ease-cine), filter 1.8s var(--ease-cine), transform 1.8s var(--ease-cine)",
         }}
       >
-        <Letter />
+        <Letter onCinema={onCinema} />
       </main>
-      {started && <MusicControl />}
+      {started && !cinema && <MusicControl />}
     </>
   );
 }
 
 function Intro({ entered, onEnter }: { entered: boolean; onEnter: () => void }) {
   const btn = useRef<HTMLButtonElement | null>(null);
+  const [focused, setFocused] = useState(false);
+
   useEffect(() => {
     btn.current?.focus();
+    const id = window.setTimeout(() => setFocused(true), 700);
+    return () => window.clearTimeout(id);
   }, []);
 
   return (
@@ -104,11 +119,11 @@ function Intro({ entered, onEnter }: { entered: boolean; onEnter: () => void }) 
       <div
         className="w-full max-w-xl text-center"
         style={{
-          filter: entered ? "blur(0px)" : "blur(22px)",
-          opacity: entered ? 1 : 0.72,
-          transform: entered ? "scale(1)" : "scale(1.03)",
+          filter: focused ? "blur(0px)" : "blur(24px)",
+          opacity: focused ? 1 : 0.6,
+          transform: focused ? "scale(1)" : "scale(1.03)",
           transition:
-            "filter 1.6s var(--ease-cine), opacity 1.6s var(--ease-cine), transform 1.6s var(--ease-cine)",
+            "filter 2s var(--ease-cine), opacity 2s var(--ease-cine), transform 2s var(--ease-cine)",
         }}
       >
         <h1 className="display-xl text-[color:var(--ink)]">Hey, you.</h1>
@@ -153,7 +168,7 @@ function Beat() {
   return <div className="h-[16vh] sm:h-[22vh]" aria-hidden />;
 }
 
-function Letter() {
+function Letter({ onCinema }: { onCinema: (on: boolean) => void }) {
   return (
     <>
       <section className="flex min-h-[92svh] flex-col justify-center py-24">
@@ -177,9 +192,9 @@ function Letter() {
           that difficult meant impossible.
         </Line>
         <Line>
-          I now understand those are not the same thing. Distance is hard, missing someone is hard,
-          and not being able to see someone whenever you want is hard — but I made the mistake of
-          treating difficulty like a conclusion.
+          I know now those aren&apos;t the same thing. Distance is hard. Missing you is hard. Not
+          being able to see you whenever I wanted is hard. But I treated difficulty like a
+          conclusion.
         </Line>
         <Reveal as="p" className="display-lg pt-6">
           I was wrong, and I regret it deeply.
@@ -193,30 +208,30 @@ function Letter() {
           <p className="whisper">After</p>
         </Reveal>
         <Line>
-          After the breakup, I acted nonchalant and distant. This was not because I stopped caring.
-          I didn&apos;t know how to be &ldquo;just friends&rdquo; with you.
+          After the breakup, I acted nonchalant and distant. It wasn&apos;t because I stopped
+          caring. I didn&apos;t know how to be &ldquo;just friends&rdquo; with you.
         </Line>
         <Line>
           I thought that if I became distant enough, stopped talking as much, stopped looking for
-          reasons to interact with you and acted like everything was normal, eventually the feelings
-          would disappear.
+          reasons to interact with you and acted like everything was normal, the feelings would
+          eventually disappear.
         </Line>
         <Reveal as="p" className="display-lg py-6">
           They didn&apos;t.
         </Reveal>
         <Line>I was hurting quietly.</Line>
         <Line>
-          My distance may have looked like indifference, but it wasn&apos;t. I was distant because I
-          cared too much and didn&apos;t know how to exist around you without wanting you back.
+          My distance may have looked like indifference. It wasn&apos;t. I was distant because I
+          cared too much and didn&apos;t know how to be around you without wanting you back.
         </Line>
       </section>
 
       <section className="max-w-[42ch] space-y-8 py-[10vh] sm:max-w-[50ch]">
         <Line>I haven&apos;t been able to function properly without you in my life.</Line>
         <Line>
-          I&apos;ve continued working, studying, building things, laughing, talking to people and
-          doing everything I&apos;m supposed to do — but underneath everything there has been an
-          emptiness, because you are no longer part of my everyday life.
+          I&apos;ve kept working, studying, building things, laughing, talking to people, doing
+          everything I&apos;m supposed to do — and underneath all of it there&apos;s just emptiness,
+          because you&apos;re not part of my days anymore.
         </Line>
         <div className="space-y-3 pt-4">
           <Reveal as="p" className="prose-line">
@@ -226,17 +241,45 @@ function Letter() {
             The random moments.
           </Reveal>
           <Reveal as="p" className="prose-line" delay={240}>
-            The things I would normally tell you.
+            The things I&apos;d normally tell you.
           </Reveal>
           <Reveal as="p" className="prose-line" delay={360}>
-            Being able to have someone on the other side of my phone who was you.
+            Having you on the other side of my phone.
           </Reveal>
         </div>
         <Line>
-          I didn&apos;t realize how deeply you had become part of my everyday life until I
-          deliberately removed you from it.
+          I didn&apos;t realise how much of my everyday life was you until I took you out of it.
         </Line>
-        <Line>I don&apos;t want a life where I simply have to get used to you not being in it.</Line>
+        <Line>I don&apos;t want a life where I just get used to you not being in it.</Line>
+
+        <div className="pt-10">
+          <Reveal>
+            <ThingsIMiss />
+          </Reveal>
+        </div>
+      </section>
+
+      <Beat />
+
+      {/* WHAT YOU TAUGHT ME */}
+      <section className="max-w-[42ch] space-y-8 py-[10vh] sm:max-w-[50ch]">
+        <Reveal>
+          <p className="whisper">Something I never thanked you for properly</p>
+        </Reveal>
+        <Reveal as="p" className="display-lg">
+          You taught me that I&apos;m nothing like my father.
+        </Reveal>
+        <Line>You taught me to stop looking down on myself.</Line>
+        <Line delay={120}>To stop talking down to myself.</Line>
+        <Line delay={240}>
+          To stop shrinking myself and defining who I am by the things I&apos;ve been through.
+        </Line>
+        <Line>
+          So when I think about what you gave me, it wasn&apos;t only love. You changed the way I
+          see myself. You made me believe I could be better than the version of me I sometimes
+          believed I was.
+        </Line>
+        <Line>And I don&apos;t know if you ever realised how much that meant to me.</Line>
       </section>
 
       <Beat />
@@ -273,38 +316,65 @@ function Letter() {
 
         <div className="mx-auto max-w-[40ch] py-[6vh]">
           <Line>
-            I miss you. Not an imaginary version of you. You. I miss your voice, our conversations,
-            the stupid little things that probably didn&apos;t seem important at the time.
+            I miss you. Not an imaginary version of you. You. Your voice, our conversations, the
+            stupid little things that probably didn&apos;t seem important at the time.
           </Line>
         </div>
 
-        <Chapter caption="And this." src={v6.url} poster={p6.url} label="A memory of us" />
+        <Chapter src={v6.url} poster={p6.url} label="A memory of us" caption="And this." />
 
         <div className="mx-auto max-w-[40ch] py-[6vh]">
           <Line>
-            Laughing together. Being able to tell you random things and knowing you&apos;d
-            understand why I was telling you.
+            Laughing with you. Telling you random things and knowing you&apos;d get why I was
+            telling you.
           </Line>
           <Reveal as="p" className="display-lg pt-8">
             I miss being us.
           </Reveal>
         </div>
-
-        <Chapter
-          caption="I wish I could go back to this moment for a minute."
-          src={v7.url}
-          poster={p7.url}
-          label="A memory of us"
-        />
-
-        <div className="mx-auto max-w-[40ch] space-y-7 py-[8vh]">
-          <Line>I didn&apos;t know I was going to miss moments like these this much.</Line>
-          <Line delay={120}>
-            Funny how you don&apos;t realize you&apos;re living a memory until it&apos;s already
-            one.
-          </Line>
-        </div>
       </section>
+
+      <Beat />
+
+      {/* THE UK / MASTER'S MEMORY */}
+      <section className="max-w-[42ch] space-y-8 py-[10vh] sm:max-w-[50ch]">
+        <Reveal>
+          <p className="whisper">One I keep coming back to</p>
+        </Reveal>
+        <Line>
+          I still remember that conversation about what I wanted to do after university. I told you
+          about my plan to get a scholarship and go straight to the UK for my master&apos;s. Then I
+          told you I&apos;d changed my mind. That I&apos;d stay here, with you.
+        </Line>
+        <Line>You told me you didn&apos;t want me throwing my life away just for you.</Line>
+        <Line delay={120}>
+          And I told you I&apos;d throw whatever needed throwing without a second thought.
+        </Line>
+        <Line>
+          Then you sent me that voice note. You told me how lucky you were to have me. You told me
+          how much you loved me.
+        </Line>
+        <Reveal as="p" className="display-lg pt-4">
+          I still listen to it.
+        </Reveal>
+        <Line delay={120}>Even now.</Line>
+        <Line delay={240}>I listen to it and I smile.</Line>
+        <Line delay={400}>And then I remember that I don&apos;t have you anymore.</Line>
+      </section>
+
+      <Beat />
+
+      {/* PUT YOUR PHONE DOWN → cinematic memory */}
+      <section className="py-[12vh]">
+        <PhoneDownGate src={v7.url} poster={p7.url} label="A memory of us" onCinema={onCinema} />
+      </section>
+
+      <div className="mx-auto max-w-[40ch] space-y-7 py-[8vh]">
+        <Line>I didn&apos;t know this would become a memory.</Line>
+        <Line delay={160}>
+          Funny how you don&apos;t realise you&apos;re living a memory until it&apos;s already one.
+        </Line>
+      </div>
 
       <Beat />
 
@@ -313,35 +383,61 @@ function Letter() {
         <Reveal>
           <p className="whisper">What I own</p>
         </Reveal>
-        <Line>I could make excuses, but I don&apos;t want to. I made the decision. I have to own it.</Line>
+        <Line>I could make excuses. I don&apos;t want to. I made the decision. I own it.</Line>
         <Line>
           You didn&apos;t deserve to be left wondering whether you were worth the effort. You
-          didn&apos;t deserve to have someone who loved you decide that the circumstances were
-          enough reason to walk away. And you didn&apos;t deserve my pretending afterward that I was
-          fine.
+          didn&apos;t deserve someone who loved you deciding that the circumstances were reason
+          enough to walk away. And you didn&apos;t deserve me pretending afterwards that I was fine.
         </Line>
         <Reveal as="p" className="display-lg py-4">
           I&apos;m sorry. Genuinely sorry.
         </Reveal>
         <Line>
-          I now understand that loving someone doesn&apos;t mean everything will always be easy.
-          Sometimes loving someone means looking at something difficult and asking:
+          Loving someone doesn&apos;t mean everything is always easy. Sometimes it means looking at
+          something hard and asking:
         </Line>
         <Reveal as="p" className="display-lg">
           &ldquo;How do we figure this out?&rdquo;
         </Reveal>
         <Line>
-          Instead, I looked at the distance and decided the answer for both of us. I didn&apos;t
-          give us the chance to figure it out together. That&apos;s what I regret.
+          Instead I looked at the distance and decided the answer for both of us. I didn&apos;t give
+          us the chance to figure it out together. That&apos;s what I regret.
         </Line>
         <Line>
-          The problem wasn&apos;t that I stopped loving you. The problem was that I convinced myself
-          love wasn&apos;t enough to make the difficult parts worth facing.
+          The problem wasn&apos;t that I stopped loving you. It&apos;s that I convinced myself love
+          wasn&apos;t enough to make the hard parts worth facing.
         </Line>
       </section>
 
+      <Beat />
+
+      {/* YOU'RE STILL HERE */}
+      <section className="flex min-h-[60svh] max-w-[40ch] flex-col justify-center gap-8 py-[10vh]">
+        <Reveal as="p" className="display-lg">
+          You&apos;re still here.
+        </Reveal>
+        <Reveal as="p" className="prose-line" delay={900}>
+          Thank you for staying long enough to hear me out.
+        </Reveal>
+      </section>
+
+      <Beat />
+
+      {/* EASTER EGG */}
+      <section className="py-[8vh]">
+        <Reveal>
+          <Terminal />
+        </Reveal>
+      </section>
+
+      <Beat />
+
+      {/* IF I COULD GO BACK */}
+      <section className="py-[12vh]">
+        <GoBack />
+      </section>
+
       <section className="max-w-[42ch] space-y-8 py-[10vh] sm:max-w-[50ch]">
-        <Line>If I could go back to the moment I ended things, I wouldn&apos;t do it.</Line>
         <div className="space-y-3">
           <Reveal as="p" className="prose-line">
             I&apos;d talk to you.
@@ -356,54 +452,23 @@ function Letter() {
             I&apos;d tell you I didn&apos;t know how we&apos;d make it work.
           </Reveal>
         </div>
+        <Line>And then I&apos;d ask how we could figure it out together, instead of ending it.</Line>
+        <Line>I know I hurt you. I know an apology doesn&apos;t erase that.</Line>
         <Line>
-          And then I&apos;d ask how we could figure it out together, instead of deciding that we
-          should end it.
-        </Line>
-        <Line>I know I hurt you. I know an apology doesn&apos;t erase what happened.</Line>
-        <Line>
-          You may be angry. You may be confused. You may not trust me the same way anymore. You may
-          need time. You may not even want the relationship anymore.
+          You may be angry. You may be confused. You may not trust me the same way. You may need
+          time. You may not want the relationship anymore.
         </Line>
         <Line>
-          I don&apos;t get to decide how you feel about what happened. I will not pressure you. I
-          will not ask you to forget. I will not ask you to pretend nothing happened.
+          I don&apos;t get to decide how you feel about what I did. I won&apos;t pressure you. I
+          won&apos;t ask you to forget. I won&apos;t ask you to pretend nothing happened.
         </Line>
-        <Line>
-          I simply want you to know that I understand what I did now, and that I regret it.
-        </Line>
+        <Line>I just needed you to know that I understand what I did, and that I regret it.</Line>
       </section>
 
       <Beat />
 
-      {/* EASTER EGG */}
-      <section className="py-[8vh]">
-        <Reveal>
-          <Terminal />
-        </Reveal>
-      </section>
-
-      <Beat />
-
-      {/* FINAL MEMORY */}
-      <section className="py-[8vh]">
-        <Reveal>
-          <p className="whisper">One last memory.</p>
-        </Reveal>
-        <Chapter src={v8.url} poster={p8.url} label="A memory of us" />
-        <div className="mx-auto max-w-[40ch] space-y-6 py-[6vh]">
-          <Reveal as="p" className="display-lg">
-            Look at us.
-          </Reveal>
-          <Line>I don&apos;t want this to just be something I look back on.</Line>
-          <Line delay={120}>I want more moments like this.</Line>
-          <Reveal as="p" className="display-lg pt-2" delay={220}>
-            With you.
-          </Reveal>
-        </div>
-      </section>
-
-      <Beat />
+      {/* THE "US" TRANSITION */}
+      <UsTransition />
 
       <FinalAsk />
 
@@ -420,8 +485,56 @@ function Letter() {
         <Reveal as="p" className="whisper pt-8" delay={480}>
           — Josiah
         </Reveal>
+        <StayLine />
       </footer>
     </>
+  );
+}
+
+function UsTransition() {
+  return (
+    <section className="us-veil -mx-6 px-6 sm:-mx-10 sm:px-10">
+      <div className="mx-auto flex min-h-[80svh] max-w-[38ch] flex-col justify-center gap-12 py-[14vh]">
+        <Reveal as="p" className="prose-line">
+          For a while, I thought I needed to get used to life without you.
+        </Reveal>
+        <Reveal as="p" className="display-lg" delay={1200}>
+          I don&apos;t want to.
+        </Reveal>
+        <Reveal as="p" className="display-lg" delay={2400}>
+          I want more moments like those.
+        </Reveal>
+      </div>
+
+      <div className="py-[6vh]">
+        <Reveal>
+          <p className="whisper text-center">One last memory.</p>
+        </Reveal>
+        <Chapter src={v8.url} poster={p8.url} label="A memory of us" />
+      </div>
+
+      <div className="mx-auto flex min-h-[60svh] max-w-[38ch] flex-col justify-center gap-10 py-[10vh]">
+        <Reveal as="p" className="display-xl">
+          With you.
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function StayLine() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const id = window.setTimeout(() => setShow(true), 14000);
+    return () => window.clearTimeout(id);
+  }, []);
+  return (
+    <p
+      className="whisper pt-24 transition-opacity duration-[2500ms]"
+      style={{ opacity: show ? 0.6 : 0 }}
+    >
+      You can stay here for a while.
+    </p>
   );
 }
 
@@ -465,18 +578,18 @@ function FinalAsk() {
           our story.
         </Line>
         <Line>
-          I am not asking for a perfect relationship. Distance will still be difficult. There will
+          I&apos;m not asking for a perfect relationship. Distance will still be hard. There will
           still be difficult days. There will still be moments when being apart sucks.
         </Line>
         <Line>
-          But if there is still something here, I&apos;d rather face those things with you than lose
-          you because I was afraid of them.
+          But if there&apos;s still something here, I&apos;d rather face all of that with you than
+          lose you because I was afraid of it.
         </Line>
         <Line>
           I want another chance. Not to pretend nothing happened — but to do better. To communicate
           better. To be honest when something is bothering me instead of running from it. To stop
-          treating obstacles like conclusions. To actually fight for something before deciding it is
-          impossible.
+          treating obstacles like conclusions. To actually fight for something before deciding
+          it&apos;s impossible.
         </Line>
         <Reveal as="p" className="display-lg pt-6">
           Can we try again?
@@ -502,7 +615,7 @@ function FinalAsk() {
         )}
 
         {choice === "talk" && (
-          <div className="reveal is-in mt-10 max-w-[42ch] space-y-6">
+          <div className="soft-in mt-10 max-w-[42ch] space-y-6">
             <p className="display-lg">Then let&apos;s talk.</p>
             <p className="prose-line">
               No more speeches. No more pretending. No more trying to act like we don&apos;t still
@@ -512,7 +625,7 @@ function FinalAsk() {
               <a href={CALL_LINK} className="quiet-btn">
                 Call me
               </a>
-              <a href={MESSAGE_LINK} className="quiet-btn">
+              <a href={MESSAGE_LINK} target="_blank" rel="noreferrer" className="quiet-btn">
                 Message me
               </a>
             </div>
@@ -520,7 +633,7 @@ function FinalAsk() {
         )}
 
         {choice === "time" && (
-          <div className="reveal is-in mt-10 max-w-[42ch] space-y-6">
+          <div className="soft-in mt-10 max-w-[42ch] space-y-6">
             <p className="display-lg">That&apos;s okay.</p>
             <p className="prose-line">
               You don&apos;t owe me an answer because I built an unnecessarily elaborate website to
