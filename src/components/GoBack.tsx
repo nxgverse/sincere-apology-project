@@ -56,10 +56,10 @@ export function GoBack() {
 
       {phase === "reveal" && (
         <div className="space-y-8">
-          <p className="reveal is-in display-lg">I wouldn&apos;t change you.</p>
+          <p className="soft-in display-lg">I wouldn&apos;t change you.</p>
           <p
-            className="reveal is-in display-lg"
-            style={{ transitionDelay: "1400ms" }}
+            className="soft-in display-lg"
+            style={{ animationDelay: "1400ms" }}
           >
             I would change my decision.
           </p>

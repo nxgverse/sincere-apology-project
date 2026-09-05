@@ -43,7 +43,7 @@ export function ThingsIMiss() {
         {THOUGHTS.slice(0, step + 1).map((t, i) => (
           <li
             key={t.text}
-            className={`reveal is-in ${i === THOUGHTS.length - 1 ? "display-lg" : "prose-line"}`}
+            className={`soft-in ${i === THOUGHTS.length - 1 ? "display-lg" : "prose-line"}`}
             style={{ transitionDelay: "0ms" }}
           >
             {t.text}
